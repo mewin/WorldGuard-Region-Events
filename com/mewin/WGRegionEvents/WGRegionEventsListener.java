@@ -84,12 +84,16 @@ public class WGRegionEventsListener implements Listener {
     
     private synchronized boolean updateRegions(Player player, MovementWay movement, Location to)
     {
-        Set<ProtectedRegion> regions = new HashSet<ProtectedRegion>(playerRegions.get(player));
+        Set<ProtectedRegion> regions;
         Set<ProtectedRegion> oldRegions;
         
-        if (regions == null)
+        if (playerRegions.get(player) == null)
         {
             regions = new HashSet<ProtectedRegion>();
+        }
+        else
+        {
+            regions = new HashSet<ProtectedRegion>(playerRegions.get(player));
         }
         
         oldRegions = new HashSet<ProtectedRegion>(regions);
@@ -134,7 +138,6 @@ public class WGRegionEventsListener implements Listener {
             {
                 if (rm.getRegion(region.getId()) != region)
                 {
-                    //regions.remove(region);
                     itr.remove();
                     continue;
                 }
@@ -153,8 +156,8 @@ public class WGRegionEventsListener implements Listener {
                     itr.remove();
                 }
             }
-        playerRegions.put(player, regions);
         }
+        playerRegions.put(player, regions);
         return false;
     }
     
