@@ -1,11 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mewin.WGRegionEvents;
 
 import com.mewin.WGRegionEvents.events.RegionEnterEvent;
+import com.mewin.WGRegionEvents.events.RegionEnteredEvent;
 import com.mewin.WGRegionEvents.events.RegionLeaveEvent;
+import com.mewin.WGRegionEvents.events.RegionLeftEvent;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -49,13 +47,35 @@ public class WGRegionEventsListener implements Listener {
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e)
     {
-        playerRegions.remove(e.getPlayer());
+        Set<ProtectedRegion> regions = playerRegions.remove(e.getPlayer());
+        if (regions != null)
+        {
+            for(ProtectedRegion region : regions)
+            {
+                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
+                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
+
+                plugin.getServer().getPluginManager().callEvent(leaveEvent);
+                plugin.getServer().getPluginManager().callEvent(leftEvent);
+            }
+        }
     }
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e)
     {
-        playerRegions.remove(e.getPlayer());
+        Set<ProtectedRegion> regions = playerRegions.remove(e.getPlayer());
+        if (regions != null)
+        {
+            for(ProtectedRegion region : regions)
+            {
+                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
+                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
+
+                plugin.getServer().getPluginManager().callEvent(leaveEvent);
+                plugin.getServer().getPluginManager().callEvent(leftEvent);
+            }
+        }
     }
     
     @EventHandler
@@ -82,7 +102,7 @@ public class WGRegionEventsListener implements Listener {
         updateRegions(e.getPlayer(), MovementWay.SPAWN, e.getRespawnLocation());
     }
     
-    private synchronized boolean updateRegions(Player player, MovementWay movement, Location to)
+    private synchronized boolean updateRegions(final Player player, final MovementWay movement, Location to)
     {
         Set<ProtectedRegion> regions;
         Set<ProtectedRegion> oldRegions;
@@ -107,7 +127,7 @@ public class WGRegionEventsListener implements Listener {
         
         ApplicableRegionSet appRegions = rm.getApplicableRegions(to);
         
-        for (ProtectedRegion region : appRegions)
+        for (final ProtectedRegion region : appRegions)
         {
             if (!regions.contains(region))
             {
@@ -124,6 +144,22 @@ public class WGRegionEventsListener implements Listener {
                 }
                 else
                 {
+                    (new Thread()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                sleep(50);
+                            }
+                            catch(InterruptedException ex)
+                            {}
+                            RegionEnteredEvent e = new RegionEnteredEvent(region, player, movement);
+                            
+                            plugin.getServer().getPluginManager().callEvent(e);
+                        }
+                    }).start();
                     regions.add(region);
                 }
             }
@@ -133,7 +169,7 @@ public class WGRegionEventsListener implements Listener {
         Iterator<ProtectedRegion> itr = regions.iterator();
         while(itr.hasNext())
         {
-            ProtectedRegion region = itr.next();
+            final ProtectedRegion region = itr.next();
             if (!app.contains(region))
             {
                 if (rm.getRegion(region.getId()) != region)
@@ -153,6 +189,22 @@ public class WGRegionEventsListener implements Listener {
                 }
                 else
                 {
+                    (new Thread()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                sleep(50);
+                            }
+                            catch(InterruptedException ex)
+                            {}
+                            RegionLeftEvent e = new RegionLeftEvent(region, player, movement);
+                            
+                            plugin.getServer().getPluginManager().callEvent(e);
+                        }
+                    }).start();
                     itr.remove();
                 }
             }
