@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -144,22 +145,16 @@ public class WGRegionEventsListener implements Listener {
                 }
                 else
                 {
-                    (new Thread()
+                    Bukkit.getScheduler().runTaskLater(plugin,new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            try
-                            {
-                                sleep(50);
-                            }
-                            catch(InterruptedException ex)
-                            {}
                             RegionEnteredEvent e = new RegionEnteredEvent(region, player, movement);
                             
                             plugin.getServer().getPluginManager().callEvent(e);
                         }
-                    }).start();
+                    }, 1L);
                     regions.add(region);
                 }
             }
@@ -189,22 +184,16 @@ public class WGRegionEventsListener implements Listener {
                 }
                 else
                 {
-                    (new Thread()
+                    Bukkit.getScheduler().runTaskLater(plugin,new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            try
-                            {
-                                sleep(50);
-                            }
-                            catch(InterruptedException ex)
-                            {}
                             RegionLeftEvent e = new RegionLeftEvent(region, player, movement);
                             
                             plugin.getServer().getPluginManager().callEvent(e);
                         }
-                    }).start();
+                    }, 1L);
                     itr.remove();
                 }
             }
