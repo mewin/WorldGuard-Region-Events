@@ -5,10 +5,17 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.entity.Player;
 
 /**
- *
+ * event that is triggered after a player entered a WorldGuard region
  * @author mewin<mewin001@hotmail.de>
  */
-public class RegionEnteredEvent extends RegionEvent {
+public class RegionEnteredEvent extends RegionEvent
+{
+    /**
+     * creates a new RegionEnteredEvent
+     * @param region the region the player entered
+     * @param player the player who triggered the event
+     * @param movement the type of movement how the player entered the region
+     */
     public RegionEnteredEvent(ProtectedRegion region, Player player, MovementWay movement)
     {
         super(region, player, movement);

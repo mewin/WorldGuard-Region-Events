@@ -7,7 +7,6 @@ package com.mewin.WGRegionEvents.events;
 import com.mewin.WGRegionEvents.MovementWay;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
