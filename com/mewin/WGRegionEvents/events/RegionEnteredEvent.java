@@ -2,6 +2,7 @@ package com.mewin.WGRegionEvents.events;
 
 import com.mewin.WGRegionEvents.MovementWay;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -15,9 +16,10 @@ public class RegionEnteredEvent extends RegionEvent
      * @param region the region the player entered
      * @param player the player who triggered the event
      * @param movement the type of movement how the player entered the region
+     * @param from Location the player moved from
      */
-    public RegionEnteredEvent(ProtectedRegion region, Player player, MovementWay movement)
+    public RegionEnteredEvent(ProtectedRegion region, Player player, MovementWay movement, Location from)
     {
-        super(region, player, movement);
+        super(region, player, movement, from);
     }
 }
