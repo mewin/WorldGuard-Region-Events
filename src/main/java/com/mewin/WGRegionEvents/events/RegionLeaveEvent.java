@@ -2,7 +2,6 @@ package com.mewin.WGRegionEvents.events;
 
 import com.mewin.WGRegionEvents.MovementWay;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
@@ -17,14 +16,13 @@ public class RegionLeaveEvent extends RegionEvent  implements Cancellable {
      * @param region the region the player is leaving
      * @param player the player who triggered the event
      * @param movement the type of movement how the player leaves the region
-     * @param from Location the player moved from
      */
-    public RegionLeaveEvent(ProtectedRegion region, Player player, MovementWay movement, Location from)
+    public RegionLeaveEvent(ProtectedRegion region, Player player, MovementWay movement)
     {
-        super(region, player, movement, from);
+        super(region, player, movement);
         cancelled = false;
         cancellable = true;
-
+        
         if (movement == MovementWay.SPAWN
             || movement == MovementWay.DISCONNECT)
         {
