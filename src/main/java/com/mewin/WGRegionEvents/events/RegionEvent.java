@@ -20,12 +20,14 @@ public abstract class RegionEvent extends PlayerEvent {
     
     private ProtectedRegion region;
     private MovementWay movement;
-    
-    public RegionEvent(ProtectedRegion region, Player player, MovementWay movement)
+    public PlayerEvent parentEvent;
+
+    public RegionEvent(ProtectedRegion region, Player player, MovementWay movement, PlayerEvent parent)
     {
         super(player);
         this.region = region;
         this.movement = movement;
+        this.parentEvent = parent;
     }
 
     @Override
@@ -47,4 +49,6 @@ public abstract class RegionEvent extends PlayerEvent {
     {
         return this.movement;
     }
+
+    public PlayerEvent getParentEvent() { return parentEvent;}
 }

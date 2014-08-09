@@ -4,6 +4,7 @@ import com.mewin.WGRegionEvents.MovementWay;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.player.PlayerEvent;
 
 /**
  * event that is triggered before a player enters a WorldGuard region, can be cancelled sometimes
@@ -18,9 +19,9 @@ public class RegionEnterEvent extends RegionEvent implements Cancellable
      * @param player the player who triggered the event
      * @param movement the type of movement how the player enters the region
      */
-    public RegionEnterEvent(ProtectedRegion region, Player player, MovementWay movement)
+    public RegionEnterEvent(ProtectedRegion region, Player player, MovementWay movement, PlayerEvent parent)
     {
-        super(region, player, movement);
+        super(region, player, movement, parent);
         cancelled = false;
         cancellable = true;
         
