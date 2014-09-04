@@ -8,24 +8,15 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  *
@@ -53,8 +44,8 @@ public class WGRegionEventsListener implements Listener {
         {
             for(ProtectedRegion region : regions)
             {
-                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
-                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
+                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
+                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
 
                 plugin.getServer().getPluginManager().callEvent(leaveEvent);
                 plugin.getServer().getPluginManager().callEvent(leftEvent);
@@ -70,8 +61,8 @@ public class WGRegionEventsListener implements Listener {
         {
             for(ProtectedRegion region : regions)
             {
-                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
-                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT);
+                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
+                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
 
                 plugin.getServer().getPluginManager().callEvent(leaveEvent);
                 plugin.getServer().getPluginManager().callEvent(leftEvent);
@@ -82,28 +73,28 @@ public class WGRegionEventsListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e)
     {
-        e.setCancelled(updateRegions(e.getPlayer(), MovementWay.MOVE, e.getTo()));
+        e.setCancelled(updateRegions(e.getPlayer(), MovementWay.MOVE, e.getTo(), e));
     }
     
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e)
     {
-        e.setCancelled(updateRegions(e.getPlayer(), MovementWay.TELEPORT, e.getTo()));
+        e.setCancelled(updateRegions(e.getPlayer(), MovementWay.TELEPORT, e.getTo(), e));
     }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e)
     {
-        updateRegions(e.getPlayer(), MovementWay.SPAWN, e.getPlayer().getLocation());
+        updateRegions(e.getPlayer(), MovementWay.SPAWN, e.getPlayer().getLocation(), e);
     }
     
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e)
     {
-        updateRegions(e.getPlayer(), MovementWay.SPAWN, e.getRespawnLocation());
+        updateRegions(e.getPlayer(), MovementWay.SPAWN, e.getRespawnLocation(), e);
     }
     
-    private synchronized boolean updateRegions(final Player player, final MovementWay movement, Location to)
+    private synchronized boolean updateRegions(final Player player, final MovementWay movement, Location to, final PlayerEvent event)
     {
         Set<ProtectedRegion> regions;
         Set<ProtectedRegion> oldRegions;
@@ -132,7 +123,7 @@ public class WGRegionEventsListener implements Listener {
         {
             if (!regions.contains(region))
             {
-                RegionEnterEvent e = new RegionEnterEvent(region, player, movement);
+                RegionEnterEvent e = new RegionEnterEvent(region, player, movement, event);
                 
                 plugin.getServer().getPluginManager().callEvent(e);
                 
@@ -151,7 +142,7 @@ public class WGRegionEventsListener implements Listener {
                         public void run()
                         {
                             {}
-                            RegionEnteredEvent e = new RegionEnteredEvent(region, player, movement);
+                            RegionEnteredEvent e = new RegionEnteredEvent(region, player, movement, event);
                             
                             plugin.getServer().getPluginManager().callEvent(e);
                         }
@@ -173,7 +164,7 @@ public class WGRegionEventsListener implements Listener {
                     itr.remove();
                     continue;
                 }
-                RegionLeaveEvent e = new RegionLeaveEvent(region, player, movement);
+                RegionLeaveEvent e = new RegionLeaveEvent(region, player, movement, event);
 
                 plugin.getServer().getPluginManager().callEvent(e);
 
@@ -190,7 +181,7 @@ public class WGRegionEventsListener implements Listener {
                         @Override
                         public void run()
                         {
-                            RegionLeftEvent e = new RegionLeftEvent(region, player, movement);
+                            RegionLeftEvent e = new RegionLeftEvent(region, player, movement, event);
                             
                             plugin.getServer().getPluginManager().callEvent(e);
                         }
