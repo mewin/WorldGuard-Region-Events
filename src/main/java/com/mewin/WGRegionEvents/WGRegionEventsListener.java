@@ -22,7 +22,8 @@ import java.util.*;
  *
  * @author mewin
  */
-public class WGRegionEventsListener implements Listener {
+public class WGRegionEventsListener implements Listener
+{
     private WorldGuardPlugin wgPlugin;
     private WGRegionEventsPlugin plugin;
     
