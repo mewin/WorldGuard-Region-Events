@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -153,7 +152,7 @@ public class WGRegionEventsListener implements Listener
             }
         }
         
-        Collection<ProtectedRegion> app = (Collection<ProtectedRegion>) getPrivateValue(appRegions, "applicable");
+        Collection<ProtectedRegion> app = appRegions.getRegions();
         Iterator<ProtectedRegion> itr = regions.iterator();
         while(itr.hasNext())
         {
@@ -193,17 +192,5 @@ public class WGRegionEventsListener implements Listener
         }
         playerRegions.put(player, regions);
         return false;
-    }
-    
-    private Object getPrivateValue(Object obj, String name)
-    {
-        try {
-            Field f = obj.getClass().getDeclaredField(name);
-            f.setAccessible(true);
-            return f.get(obj);
-        } catch (Exception ex) {
-            return null;
-        }
-        
     }
 }
