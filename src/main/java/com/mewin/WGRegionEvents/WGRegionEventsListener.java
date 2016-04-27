@@ -117,7 +117,13 @@ public class WGRegionEventsListener implements Listener
             return false;
         }
         
-        ApplicableRegionSet appRegions = rm.getApplicableRegions(to);
+        HashSet<ProtectedRegion> appRegions = new HashSet<ProtectedRegion>(
+                rm.getApplicableRegions(to).getRegions());
+        ProtectedRegion globalRegion = rm.getRegion("__global__");
+        if (globalRegion != null) // just to be sure
+        {
+            appRegions.add(globalRegion);
+        }
         
         for (final ProtectedRegion region : appRegions)
         {
@@ -152,12 +158,11 @@ public class WGRegionEventsListener implements Listener
             }
         }
         
-        Collection<ProtectedRegion> app = appRegions.getRegions();
         Iterator<ProtectedRegion> itr = regions.iterator();
         while(itr.hasNext())
         {
             final ProtectedRegion region = itr.next();
-            if (!app.contains(region))
+            if (!appRegions.contains(region))
             {
                 if (rm.getRegion(region.getId()) != region)
                 {
