@@ -110,7 +110,10 @@ public class WGRegionEventsListener implements Listener
         
         oldRegions = new HashSet<ProtectedRegion>(regions);
         
-        RegionManager rm = wgPlugin.getRegionManager(to.getWorld());
+        RegionContainer container = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer();
+        World world = to.getWorld();
+        RegionQuery query = container.createQuery();
+        RegionManager rm = (RegionManager) container.get(BukkitAdapter.adapt(world));
         
         if (rm == null)
         {
@@ -118,7 +121,7 @@ public class WGRegionEventsListener implements Listener
         }
         
         HashSet<ProtectedRegion> appRegions = new HashSet<ProtectedRegion>(
-                rm.getApplicableRegions(to).getRegions());
+                query.getApplicableRegions(BukkitAdapter.adapt(to)).getRegions());
         ProtectedRegion globalRegion = rm.getRegion("__global__");
         if (globalRegion != null) // just to be sure
         {
