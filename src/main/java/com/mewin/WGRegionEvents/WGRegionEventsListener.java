@@ -70,13 +70,13 @@ public class WGRegionEventsListener implements Listener
         }
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e)
     {
         e.setCancelled(updateRegions(e.getPlayer(), MovementWay.MOVE, e.getTo(), e));
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e)
     {
         e.setCancelled(updateRegions(e.getPlayer(), MovementWay.TELEPORT, e.getTo(), e));
